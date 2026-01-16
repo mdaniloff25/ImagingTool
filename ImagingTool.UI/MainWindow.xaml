@@ -1,0 +1,180 @@
+﻿<Window x:Class="ImagingTool.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImagingTool.UI"
+        mc:Ignorable="d"
+        Title="Driver Installation Tool"
+        Height="400"
+        Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButton"
+               TargetType="Button">
+            <Setter Property="Background"
+                    Value="#0078D4" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="20,10" />
+            <Setter Property="FontSize"
+                    Value="14" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Background"
+                            Value="#005A9E" />
+                </Trigger>
+                <Trigger Property="IsEnabled"
+                         Value="False">
+                    <Setter Property="Background"
+                            Value="#CCCCCC" />
+                    <Setter Property="Foreground"
+                            Value="#666666" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Exit Button Style -->
+        <Style x:Key="ExitButton"
+               TargetType="Button"
+               BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background"
+                    Value="#6C757D" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Background"
+                            Value="#545B62" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Modern Progress Bar Style -->
+        <Style TargetType="ProgressBar">
+            <Setter Property="Height"
+                    Value="30" />
+            <Setter Property="Foreground"
+                    Value="#0078D4" />
+            <Setter Property="Background"
+                    Value="#E0E0E0" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0"
+                    Margin="0,0,0,20">
+            <TextBlock Text="Driver Installation Tool"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="#333333"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="Automated driver installation for POS terminals"
+                       FontSize="12"
+                       Foreground="#666666"
+                       HorizontalAlignment="Center"
+                       Margin="0,5,0,0" />
+        </StackPanel>
+
+        <!-- Content Area -->
+        <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="8"
+                Padding="20"
+                BorderBrush="#DDDDDD"
+                BorderThickness="1"
+                Margin="0,0,0,20">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="System Information"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="#333333"
+                           Margin="0,0,0,10" />
+                <TextBlock Text="Ready to install drivers for your terminal"
+                           FontSize="12"
+                           Foreground="#666666"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <!-- Status Message -->
+        <Border Grid.Row="2"
+                Background="White"
+                CornerRadius="4"
+                Padding="15,10"
+                BorderBrush="#DDDDDD"
+                BorderThickness="1"
+                Margin="0,0,0,15">
+            <TextBlock Text="{Binding StatusMessage, FallbackValue='Ready to begin installation...'}"
+                       FontSize="13"
+                       Foreground="#333333"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center" />
+        </Border>
+
+        <!-- Progress Bar -->
+        <ProgressBar Grid.Row="3"
+                     Minimum="0"
+                     Maximum="{Binding MaximumProgressValue}"
+                     Value="{Binding CurrentProgressValue}"
+                     Margin="0,0,0,20" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,15">
+            <Button Content="Start Installation"
+                    Width="150"
+                    Command="{Binding StartCommand}"
+                    Style="{StaticResource ModernButton}"
+                    Margin="0,0,10,0" />
+            <Button Content="Exit"
+                    Width="100"
+                    Command="{Binding ExitCommand}"
+                    Style="{StaticResource ExitButton}" />
+        </StackPanel>
+
+        <!-- Version Info -->
+        <TextBlock Grid.Row="5"
+                   Text="{Binding VersionLabel, FallbackValue='Version 1.0.0'}"
+                   FontSize="10"
+                   Foreground="#999999"
+                   HorizontalAlignment="Right" />
+    </Grid>
+</Window>

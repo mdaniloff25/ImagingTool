@@ -1,0 +1,179 @@
+{
+  "manifestVersion": "1.0",
+  "commonDrivers": [
+    {
+      "name": "Barcode Scanner",
+      "type": "exe",
+      "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
+      "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+      "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
+      "rebootRequired": false
+    },
+    {
+      "name": "MTScale hardware",
+      "type": "cmd",
+      "path": "Drivers\\Common\\MTScale\\dpscat.exe",
+      "installCmd": "cmd.exe /c \"{path}\"",
+      "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
+      "rebootRequired": false
+    },
+    {
+      "name": "MTScale dpinst64",
+      "type": "cmd",
+      "path": "Drivers\\Common\\MTScale\\dpinst64.exe",
+      "installCmd": "cmd.exe /c \"{path}\" /sw /se /s",
+      "rebootRequired": false
+    }
+  ],
+  "terminals": [
+    {
+      "model": "NINO III",
+      "cpu": "J6412",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_Win11_Chipset\\SetupChipset.exe",
+          "installCmd": "\"{path}\" -s -norestart",
+          "uninstallCmd": "\"{path}\" /uninstall /s /v\"/qn\"",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "inf",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_Win11_IntelSerialIO\\iaLPSS2_GPIO2",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "inf",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_Win11_IntelSerialIO\\iaLPSS2_I2C",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "MEI",
+          "type": "inf",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_MEI\\win10",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Ethernet driver",
+          "type": "exe",
+          "path": "Drivers\\NINO III\\J6412\\Realtek\\Setup.exe",
+          "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+          "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
+          "rebootRequired": false
+        }
+      ]
+    },
+    {
+      "model": "PAR Wave i5",
+      "cpu": "i5",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "drivers\\PAR Wave\\i5\\Chipset 64Bit v10.1.18793.8276\\SetupChipset.exe",
+          "installCmd": "\"{path}\" -s -norestart",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "exe",
+          "path": "drivers\\PAR Wave\\i5\\SerialIO 64Bit v30.100.2129.8\\SetupSerialIO.exe",
+          "installCmd": "\"{path}\" -s",
+          "rebootRequired": false
+        },
+        {
+          "name": "USB UART",
+          "type": "inf",
+          "path": "drivers\\PAR Wave\\i5\\USB UART 64Bit v2.2.0.0",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "MEI",
+          "type": "inf",
+          "path": "drivers\\PAR Wave\\i5\\MEI\\win10",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "MSR",
+          "type": "msi",
+          "path": "drivers\\PAR Wave\\i5\\MSR 64Bit v1.8.69\\lpu230_1_8_69.msi",
+          "installCmd": "msiexec /i \"{path}\" /qn",
+          "rebootRequired": false
+        }
+      ]
+    },
+    {
+      "model": "Pulse Ultra WS",
+      "cpu": "J6412",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "drivers\\Pulse Ultra WS\\chipset\\SetupChipset.exe",
+          "installCmd": "\"{path}\" -s -norestart",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "inf",
+          "path": "Drivers\\Pulse Ultra WS\\Pulse_IntelSerialIO\\iaLPSS2_GPIO2",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "inf",
+          "path": "Drivers\\Pulse Ultra WS\\Pulse_IntelSerialIO\\iaLPSS2_I2C",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "MEI",
+          "type": "inf",
+          "path": "Drivers\\Pulse Ultra WS\\MEI\\win10",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        }
+      ]
+    },
+    {
+      "model": "Pulse Ultra WS",
+      "cpu": "i5",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "drivers/j6412/chipset/setup.exe",
+          "installCmd": "\"{path}\" /s",
+          "rebootRequired": true
+        },
+        {
+          "name": "LAN",
+          "type": "inf",
+          "path": "drivers/j6412/lan",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Graphics",
+          "type": "msi",
+          "path": "drivers/j6412/graphics/IntelGfx.msi",
+          "installCmd": "msiexec /i \"{path}\" /qn /norestart",
+          "rebootRequired": false
+        }
+      ]
+    }
+  ]
+}

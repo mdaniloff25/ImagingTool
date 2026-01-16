@@ -1,0 +1,90 @@
+{
+  "manifestVersion": "1.0",
+  "terminals": [
+    {
+      "model": "NINO III",
+      "cpu": "J6412",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_Win11_Chipset\\SetupChipset.exe",
+          "installCmd": "\"{path}\" -s -norestart",
+          "uninstallCmd": "\"{path}\" /uninstall /s /v\"/qn\"",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "inf",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_Win11_IntelSerialIO\\iaLPSS2_GPIO2",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "inf",
+          "path": "Drivers\\NINO III\\J6412\\NINOIII_Win11_IntelSerialIO\\iaLPSS2_I2C",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        }
+      ]
+    },
+    {
+      "model": "Pulse Ultra WS",
+      "cpu": "J6412",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "drivers/Pulse Ultra WS/chipset/setup.exe",
+          "installCmd": "\"{path}\" /s",
+          "rebootRequired": true
+        },
+        {
+          "name": "LAN",
+          "type": "inf",
+          "path": "drivers/j6412/lan",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Graphics",
+          "type": "msi",
+          "path": "drivers/j6412/graphics/IntelGfx.msi",
+          "installCmd": "msiexec /i \"{path}\" /qn /norestart",
+          "rebootRequired": false
+        }
+      ]
+    },
+    {
+      "model": "Pulse Ultra WS",
+      "cpu": "i5",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Chipset",
+          "type": "exe",
+          "path": "drivers/j6412/chipset/setup.exe",
+          "installCmd": "\"{path}\" /s",
+          "rebootRequired": true
+        },
+        {
+          "name": "LAN",
+          "type": "inf",
+          "path": "drivers/j6412/lan",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Graphics",
+          "type": "msi",
+          "path": "drivers/j6412/graphics/IntelGfx.msi",
+          "installCmd": "msiexec /i \"{path}\" /qn /norestart",
+          "rebootRequired": false
+        }
+      ]
+    }
+  ]
+}
