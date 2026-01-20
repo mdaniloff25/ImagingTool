@@ -60,12 +60,12 @@ namespace ImagingTool.UI
                 installers.Add(new DriverInstaller(driver));
             }
 
-            //foreach (var driver in _commonDrivers)
-            //{
-            //    driver.Path = Path.Combine(assemblyDirectory, driver.Path);
-            //    _log.Info($"Preparing to install common driver: {driver.Name} path: {driver.Path} command: {driver.InstallCmd}");
-            //    installers.Add(new DriverInstaller(driver));
-            //}
+            foreach (var driver in _commonDrivers)
+            {
+                driver.Path = Path.Combine(assemblyDirectory, driver.Path);
+                _log.Info($"Preparing to install common driver: {driver.Name} path: {driver.Path} command: {driver.InstallCmd}");
+                installers.Add(new DriverInstaller(driver));
+            }
 
             foreach (var installer in installers)
             {

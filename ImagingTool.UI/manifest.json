@@ -1,14 +1,14 @@
 {
   "manifestVersion": "1.0",
   "commonDrivers": [
-    {
-      "name": "Barcode Scanner",
-      "type": "exe",
-      "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
-      "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
-      "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
-      "rebootRequired": false
-    },
+    //{
+    //  "name": "Barcode Scanner",
+    //  "type": "exe",
+    //  "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
+    //  "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+    //  "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
+    //  "rebootRequired": false
+    //},
     {
       "name": "MTScale hardware",
       "type": "cmd",

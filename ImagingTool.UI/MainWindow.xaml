@@ -84,6 +84,8 @@
             <Setter Property="BorderThickness"
                     Value="0" />
         </Style>
+
+        <local:BoolToStatusConverter x:Key="BoolToStatusConverter" />
     </Window.Resources>
 
     <Grid Margin="30">
