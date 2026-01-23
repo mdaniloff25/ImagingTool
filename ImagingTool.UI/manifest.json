@@ -6,22 +6,20 @@
     //  "type": "exe",
     //  "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
     //  "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
-    //  "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
     //  "rebootRequired": false
     //},
     {
       "name": "MTScale hardware",
-      "type": "cmd",
+      "type": "exe",
       "path": "Drivers\\Common\\MTScale\\dpscat.exe",
-      "installCmd": "cmd.exe /c \"{path}\"",
-      "uninstallCmd": "\"{path}\" /uninstall /s /f1\"{path}\\uninstall.iss\"",
+      "installCmd": "\"{path}\"",
       "rebootRequired": false
     },
     {
       "name": "MTScale dpinst64",
-      "type": "cmd",
-      "path": "Drivers\\Common\\MTScale\\dpinst64.exe",
-      "installCmd": "cmd.exe /c \"{path}\" /sw /se /s",
+      "type": "exe",
+      "path": "Drivers\\Common\\MTScale\\dpinst_x64.exe",
+      "installCmd": "\"{path}\" /sw /se /s",
       "rebootRequired": false
     }
   ],
