@@ -1,13 +1,13 @@
 {
   "manifestVersion": "1.0",
   "commonDrivers": [
-    //{
-    //  "name": "Barcode Scanner",
-    //  "type": "exe",
-    //  "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
-    //  "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
-    //  "rebootRequired": false
-    //},
+    {
+      "name": "CCO",
+      "type": "msi",
+      "path": "drivers\\Common\\OPOS CCOs\\OPOS CCOs 32_64Bit v1.14.001.msi",
+      "installCmd": "msiexec /i \"{path}\" /qn",
+      "rebootRequired": false
+    },
     {
       "name": "MTScale hardware",
       "type": "exe",
@@ -21,9 +21,16 @@
       "path": "Drivers\\Common\\MTScale\\dpinst_x64.exe",
       "installCmd": "\"{path}\" /sw /se /s",
       "rebootRequired": false
+    },
+    {
+      "name": "Pole Display",
+      "type": "msi",
+      "path": "drivers\\Common\\LogicControls\\lcild_v207231.msi",
+      "installCmd": "msiexec /i \"{path}\" /qn",
+      "rebootRequired": false
     }
   ],
-  "terminals": [
+  "systemDrivers": [
     {
       "model": "NINO III",
       "cpu": "J6412",
@@ -100,13 +107,6 @@
           "path": "drivers\\PAR Wave\\i5\\MEI\\win10",
           "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
           "rebootRequired": false
-        },
-        {
-          "name": "MSR",
-          "type": "msi",
-          "path": "drivers\\PAR Wave\\i5\\MSR 64Bit v1.8.69\\lpu230_1_8_69.msi",
-          "installCmd": "msiexec /i \"{path}\" /qn",
-          "rebootRequired": false
         }
       ]
     },
@@ -144,31 +144,47 @@
           "rebootRequired": false
         }
       ]
+    }
+  ],
+  "peripheralDrivers": [
+    {
+      "model": "NINO III",
+      "cpu": "J6412",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        //{
+        //  "name": "Barcode Scanner",
+        //  "type": "exe",
+        //  "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
+        //  "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+        //  "rebootRequired": false
+        //},
+        {
+          "name": "Cash Drawer",
+          "type": "exe",
+          "path": "Drivers\\NINO III\\J6412\\CashDrawer\\Setup.exe",
+          "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+          "rebootRequired": false
+        }
+      ]
     },
     {
-      "model": "Pulse Ultra WS",
+      "model": "PAR Wave i5",
       "cpu": "i5",
       "os": "Windows 11 64-bit",
       "drivers": [
         {
-          "name": "Chipset",
-          "type": "exe",
-          "path": "drivers/j6412/chipset/setup.exe",
-          "installCmd": "\"{path}\" /s",
-          "rebootRequired": true
-        },
-        {
-          "name": "LAN",
-          "type": "inf",
-          "path": "drivers/j6412/lan",
-          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "name": "MSR",
+          "type": "msi",
+          "path": "drivers\\PAR Wave\\i5\\MSR 64Bit v1.8.69\\lpu230_1_8_69.msi",
+          "installCmd": "msiexec /i \"{path}\" /qn",
           "rebootRequired": false
         },
         {
-          "name": "Graphics",
-          "type": "msi",
-          "path": "drivers/j6412/graphics/IntelGfx.msi",
-          "installCmd": "msiexec /i \"{path}\" /qn /norestart",
+          "name": "Cash Drawer",
+          "type": "exe",
+          "path": "drivers\\PAR Wave\\i5\\Cash Drawer OPOS 64Bit v2.46\\Cash Drawer OPOS 64Bit v2.46.exe",
+          "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
           "rebootRequired": false
         }
       ]

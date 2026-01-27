@@ -8,7 +8,14 @@ namespace ImagingTool.Models
     public class Manifest
     {
         public string ManifestVersion { get; set; }
-        public List<Terminal> Terminals { get; set; }
-        public List<Driver> CommonDrivers { get; set; } // For future 'common' section
+        
+        // Renamed from Terminals to SystemDrivers
+        public List<Terminal> SystemDrivers { get; set; }
+        
+        // Hardware-specific peripheral drivers
+        public List<Terminal> PeripheralDrivers { get; set; }
+        
+        // Common drivers for all terminals
+        public List<Driver> CommonDrivers { get; set; }
     }
 }

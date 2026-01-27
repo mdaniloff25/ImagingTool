@@ -17,7 +17,8 @@ namespace ImagingTool.UI
         private readonly ILog _log = LogManager.GetLogger(typeof(MainWindowViewModel));
         private string _model;
         private string _cpu;
-        private Terminal _terminal;
+        private Terminal _systemDriversTerminal;
+        private Terminal _peripheralDriversTerminal;
         private List<Driver> _commonDrivers = new List<Driver>();
 
         public InstallDrivers(MainWindowViewModel viewModel)
@@ -30,20 +31,42 @@ namespace ImagingTool.UI
             GetHardwareInfo();
             string manifestPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "manifest.json");
             Manifest manifest = ManifestLoader.LoadManifest(manifestPath);
-            _commonDrivers = manifest.CommonDrivers;
+            _commonDrivers = manifest.CommonDrivers ?? new List<Driver>();
 
-            _terminal = manifest.Terminals
-                .FirstOrDefault(t => t.Model.Equals(_model, StringComparison.OrdinalIgnoreCase)
+            // Find matching system drivers
+            _systemDriversTerminal = manifest.SystemDrivers
+                ?.FirstOrDefault(t => t.Model.Equals(_model, StringComparison.OrdinalIgnoreCase)
                                      && _cpu.IndexOf(t.Cpu, StringComparison.OrdinalIgnoreCase) >= 0);
 
-            //Todo: Set the status that the suitable terminal is found or not
-            if (_terminal != null)
+            // Find matching peripheral drivers
+            _peripheralDriversTerminal = manifest.PeripheralDrivers
+                ?.FirstOrDefault(t => t.Model.Equals(_model, StringComparison.OrdinalIgnoreCase)
+                                     && _cpu.IndexOf(t.Cpu, StringComparison.OrdinalIgnoreCase) >= 0);
+
+            if (_systemDriversTerminal != null)
             {
-                foreach (var driver in _terminal.Drivers)
+                _log.Info($"Found system drivers for model: {_model}, CPU: {_cpu}");
+                foreach (var driver in _systemDriversTerminal.Drivers)
                 {
-                    
-                    _log.Info($"Added driver: {driver.Name} for model: {_model}, CPU: {_cpu}");
+                    _log.Info($"System driver: {driver.Name}");
                 }
+            }
+            else
+            {
+                _log.Warn($"No system drivers found for model: {_model}, CPU: {_cpu}");
+            }
+
+            if (_peripheralDriversTerminal != null)
+            {
+                _log.Info($"Found peripheral drivers for model: {_model}, CPU: {_cpu}");
+                foreach (var driver in _peripheralDriversTerminal.Drivers)
+                {
+                    _log.Info($"Peripheral driver: {driver.Name}");
+                }
+            }
+            else
+            {
+                _log.Info($"No peripheral drivers found for model: {_model}, CPU: {_cpu}");
             }
         }
 
@@ -51,30 +74,69 @@ namespace ImagingTool.UI
         {
             _viewModel.CurrentProgressValue += 1;
             List<DriverInstaller> installers = new List<DriverInstaller>();
-            var driversToInstall = _terminal?.Drivers;
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            foreach (var driver in driversToInstall)
+
+            // Step 1: Install system drivers first (chipset, serial IO, etc.)
+            if (_systemDriversTerminal != null)
             {
-                driver.Path = Path.Combine(assemblyDirectory, driver.Path);
-                _log.Info($"Preparing to install driver: {driver.Name} path: {driver.Path} command: {driver.InstallCmd}");
-                installers.Add(new DriverInstaller(driver));
+                _log.Info("=== Installing System Drivers ===");
+                foreach (var driver in _systemDriversTerminal.Drivers)
+                {
+                    driver.Path = Path.Combine(assemblyDirectory, driver.Path);
+                    _log.Info($"Preparing to install system driver: {driver.Name} path: {driver.Path}");
+                    installers.Add(new DriverInstaller(driver));
+                }
+
+                foreach (var installer in installers)
+                {
+                    _viewModel.StatusMessage = $"Installing system driver: {installer.DriverPath}";
+                    await installer.InstallDriverAsync();
+                    _viewModel.CurrentProgressValue += 2;
+                }
+
+                installers.Clear();
             }
 
-            foreach (var driver in _commonDrivers)
+            // Step 2: Install common drivers
+            if (_commonDrivers.Any())
             {
-                driver.Path = Path.Combine(assemblyDirectory, driver.Path);
-                _log.Info($"Preparing to install common driver: {driver.Name} path: {driver.Path} command: {driver.InstallCmd}");
-                installers.Add(new DriverInstaller(driver));
+                _log.Info("=== Installing Common Drivers ===");
+                foreach (var driver in _commonDrivers)
+                {
+                    driver.Path = Path.Combine(assemblyDirectory, driver.Path);
+                    _log.Info($"Preparing to install common driver: {driver.Name} path: {driver.Path}");
+                    installers.Add(new DriverInstaller(driver));
+                }
+
+                foreach (var installer in installers)
+                {
+                    _viewModel.StatusMessage = $"Installing common driver: {installer.DriverPath}";
+                    await installer.InstallDriverAsync();
+                    _viewModel.CurrentProgressValue += 2;
+                }
+
+                installers.Clear();
             }
 
-            foreach (var installer in installers)
+            // Step 3: Install peripheral drivers last
+            if (_peripheralDriversTerminal != null)
             {
-                _viewModel.StatusMessage = $"Installing {installer.DriverPath}";
-                await installer.InstallDriverAsync();
-                _viewModel.CurrentProgressValue += 2;
+                _log.Info("=== Installing Peripheral Drivers ===");
+                foreach (var driver in _peripheralDriversTerminal.Drivers)
+                {
+                    driver.Path = Path.Combine(assemblyDirectory, driver.Path);
+                    _log.Info($"Preparing to install peripheral driver: {driver.Name} path: {driver.Path}");
+                    installers.Add(new DriverInstaller(driver));
+                }
+
+                foreach (var installer in installers)
+                {
+                    _viewModel.StatusMessage = $"Installing peripheral driver: {installer.DriverPath}";
+                    await installer.InstallDriverAsync();
+                    _viewModel.CurrentProgressValue += 2;
+                }
             }
         }
-
 
         private void GetHardwareInfo()
         {

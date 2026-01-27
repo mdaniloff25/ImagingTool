@@ -118,6 +118,10 @@ namespace ImagingTool.Core
                 if (!string.IsNullOrWhiteSpace(error))
                     _log.Error($"Error Output: {error}");
 
+                if (process.ExitCode == 3010)
+                {
+                    _log.Warn($"Reboot required for {_driver.Name}. Exit code 3010");
+                }
                 if (process.ExitCode != 0)
                 {
                     _log.Error($"Installation failed for {_driver.Name} with exit code {process.ExitCode}");
