@@ -1,6 +1,13 @@
 {
   "manifestVersion": "1.0",
   "commonDrivers": [
+    //{
+    //  "name": "Barcode Scanner",
+    //  "type": "exe",
+    //  "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
+    //  "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+    //  "rebootRequired": false
+    //},
     {
       "name": "CCO",
       "type": "msi",
@@ -152,18 +159,18 @@
       "cpu": "J6412",
       "os": "Windows 11 64-bit",
       "drivers": [
-        //{
-        //  "name": "Barcode Scanner",
-        //  "type": "exe",
-        //  "path": "Drivers\\Common\\Scanner\\Zebra_CoreScanner.exe",
-        //  "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
-        //  "rebootRequired": false
-        //},
         {
           "name": "Cash Drawer",
           "type": "exe",
           "path": "Drivers\\NINO III\\J6412\\CashDrawer\\Setup.exe",
           "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+          "rebootRequired": false
+        },
+        {
+          "name": "Display",
+          "type": "exe",
+          "path": "Drivers\\NINO III\\J6412\\Display\\gfx_win_101.2130.exe",
+          "installCmd": "\"{path}\" -s --noExtras",
           "rebootRequired": false
         }
       ]
