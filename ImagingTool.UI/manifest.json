@@ -35,6 +35,13 @@
       "path": "drivers\\Common\\LogicControls\\lcild_v207231.msi",
       "installCmd": "msiexec /i \"{path}\" /qn",
       "rebootRequired": false
+    },
+    {
+      "name": "EPSON ADK",
+      "type": "exe",
+      "path": "drivers\\Common\\EpsonADK\\EPSON_OPOS_ADK_V3.00ER13.exe",
+      "installCmd": "\"{path}\" /quiet /norestart",
+      "rebootRequired": false
     }
   ],
   "systemDrivers": [
@@ -171,6 +178,27 @@
           "type": "exe",
           "path": "Drivers\\NINO III\\J6412\\Display\\gfx_win_101.2130.exe",
           "installCmd": "\"{path}\" -s --noExtras",
+          "rebootRequired": false
+        },
+        {
+          "name": "ID Tech Folder",
+          "type": "copy",
+          "path": "Drivers\\NINO III\\J6412\\ID TECH",
+          "installCmd": "C:\\Program Files (x86)",
+          "rebootRequired": false
+        },
+        {
+          "name": "MagSwipe Shortcut",
+          "type": "shortcut",
+          "path": "C:\\Program Files (x86)\\MagSwipe\\MagSwipe Configuration Utility\\MagSwipeCfgUtil.exe",
+          "installCmd": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\MagSwipe\\MagSwipe Configuration Utility.lnk",
+          "rebootRequired": false
+        },
+        {
+          "name": "CashDrawer Registry",
+          "type": "registry",
+          "path": "Drivers\\Common\\Registry\\Nino.reg",
+          "installCmd": "",
           "rebootRequired": false
         }
       ]
