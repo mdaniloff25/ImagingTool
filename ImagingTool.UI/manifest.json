@@ -221,6 +221,13 @@
           "path": "drivers\\PAR Wave\\i5\\Cash Drawer OPOS 64Bit v2.46\\Cash Drawer OPOS 64Bit v2.46.exe",
           "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
           "rebootRequired": false
+        },
+        {
+          "name": "Display 2x20",
+          "type": "msi",
+          "path": "drivers\\PAR Wave\\i5\\PAR Wave UPOS Line Display Driver 64Bit v1.0.0\\PAR Wave UPOS Line Display Driver 64Bit v1.0.0.msi",
+          "installCmd": "msiexec /i \"{path}\" /qn",
+          "rebootRequired": false
         }
       ]
     }
