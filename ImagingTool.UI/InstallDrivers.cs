@@ -26,6 +26,13 @@ namespace ImagingTool.UI
             _viewModel = viewModel;
         }
 
+        // Property to check if hardware is supported
+        public bool IsHardwareSupported => _systemDriversTerminal != null;
+
+        // Properties to expose hardware info
+        public string DetectedModel => _model;
+        public string DetectedCpu => _cpu;
+
         public void InitializeDrivers()
         {
             GetHardwareInfo();
@@ -54,6 +61,7 @@ namespace ImagingTool.UI
             else
             {
                 _log.Warn($"No system drivers found for model: {_model}, CPU: {_cpu}");
+                _log.Warn($"This hardware is NOT SUPPORTED. Installation will be skipped.");
             }
 
             if (_peripheralDriversTerminal != null)
@@ -72,6 +80,14 @@ namespace ImagingTool.UI
 
         public async Task InstallHardwareDriversAsync()
         {
+            // Check if hardware is supported before proceeding
+            if (!IsHardwareSupported)
+            {
+                _log.Error($"Cannot install drivers: Hardware not supported (Model: {_model}, CPU: {_cpu})");
+                _viewModel.StatusMessage = $"Installation aborted: Unsupported hardware";
+                return;
+            }
+
             _viewModel.CurrentProgressValue += 1;
             List<DriverInstaller> installers = new List<DriverInstaller>();
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -89,7 +105,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing system driver: {installer.DriverPath}";
+                    _viewModel.StatusMessage = $"Installing system driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
@@ -110,7 +126,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing common driver: {installer.DriverPath}";
+                    _viewModel.StatusMessage = $"Installing common driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
@@ -131,7 +147,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing peripheral driver: {installer.DriverPath}";
+                    _viewModel.StatusMessage = $"Installing peripheral driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }

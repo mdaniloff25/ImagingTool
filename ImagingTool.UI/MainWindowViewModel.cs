@@ -20,37 +20,90 @@ namespace ImagingTool.UI
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _maximumProgressValue = 25;
+        private bool _isHardwareSupported = true;
+        
         public ICommand StartCommand { get; }
         public ICommand ExitCommand { get; }
 
         private readonly ILog _log = LogManager.GetLogger(typeof(MainWindowViewModel));
+        
         public MainWindowViewModel()
         {
             StartCommand = new AsyncRelayCommand(async () =>
             {
                 await OnStartAsync();
-            }, () => !IsRunning);
+            }, () => !IsRunning && IsHardwareSupported);
 
             ExitCommand = new RelayCommand(x =>
                 {
                     OnExit();
                 },
                 x => !IsRunning);
+
+            // Initialize and check hardware on startup
+            Task.Run(() => InitializeAndCheckHardware());
+        }
+
+        private async Task InitializeAndCheckHardware()
+        {
+            await Task.Delay(500);
+            InitLogging();
+            
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                StatusMessage = "Detecting hardware...";
+            });
+            
+            InstallDrivers installer = new InstallDrivers(this);
+            installer.InitializeDrivers();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                IsHardwareSupported = installer.IsHardwareSupported;
+
+                if (IsHardwareSupported)
+                {
+                    StatusMessage = $"Ready to install drivers for {installer.DetectedModel} ({installer.DetectedCpu})";
+                    _log.Info("Hardware is supported. Ready for installation.");
+                }
+                else
+                {
+                    StatusMessage = $"⚠ Unsupported Hardware Detected\n" +
+                                   $"Model: {installer.DetectedModel}\n" +
+                                   $"CPU: {installer.DetectedCpu}\n" +
+                                   $"This terminal is not supported by the driver installation tool.";
+                    _log.Error($"Unsupported hardware: Model={installer.DetectedModel}, CPU={installer.DetectedCpu}");
+                }
+            });
         }
 
         public async Task OnStartAsync()
         {
             IsRunning = true;
-            InitLogging();
+            CurrentProgressValue = 0;
+            
             StatusMessage = "Inspecting system...";
-            await Task.Yield(); // Allows UI to update
+            await Task.Yield();
+            
             InstallDrivers installer = new InstallDrivers(this);
             installer.InitializeDrivers();
+
+            if (!installer.IsHardwareSupported)
+            {
+                StatusMessage = $"Installation aborted: Unsupported hardware ({installer.DetectedModel}, {installer.DetectedCpu})";
+                _log.Error("Installation aborted due to unsupported hardware.");
+                IsRunning = false;
+                return;
+            }
+
             await installer.InstallHardwareDriversAsync();
-            StatusMessage = "All drivers installed successfully.";
+            
+            CurrentProgressValue = MaximumProgressValue;
+            StatusMessage = "All drivers installed successfully!";
+            
+            await Task.Delay(1000);
             IsRunning = false;
         }
-
 
         private void OnExit()
         {
@@ -59,11 +112,36 @@ namespace ImagingTool.UI
 
         private void InitLogging()
         {
-            // Initialize logging here
             log4net.Config.XmlConfigurator.Configure();
         }
 
-        public bool IsRunning { get; set; } = false;
+        public bool IsHardwareSupported
+        {
+            get { return _isHardwareSupported; }
+            set
+            {
+                if (value == _isHardwareSupported)
+                    return;
+                _isHardwareSupported = value;
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        private bool _isRunning = false;
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+            set
+            {
+                if (value == _isRunning)
+                    return;
+                _isRunning = value;
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
         public int MaximumProgressValue
         {
             get { return _maximumProgressValue; }
@@ -76,8 +154,8 @@ namespace ImagingTool.UI
             }
         }
 
-        private int _currentProgressValue = 3;
-        private string _statusMessage;
+        private int _currentProgressValue = 0;
+        private string _statusMessage = "Initializing...";
 
         public int CurrentProgressValue
         {
@@ -103,13 +181,11 @@ namespace ImagingTool.UI
             }
         }
 
+        public string VersionLabel => "Version 1.0.0";
 
-
-        #region override impelementations
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
     }
 }

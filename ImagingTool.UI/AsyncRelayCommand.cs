@@ -40,11 +40,15 @@ namespace ImagingTool.UI
             }
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
         public void RaiseCanExecuteChanged()
         {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }
