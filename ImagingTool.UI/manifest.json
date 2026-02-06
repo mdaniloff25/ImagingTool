@@ -125,6 +125,76 @@
       ]
     },
     {
+      "model": "Razor",
+      "cpu": "i5",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "MEI",
+          "type": "exe",
+          "path": "drivers\\Razor\\i5\\Intel_ME_V15.0.10.1574\\Installers\\MEI-Only Installer MSI\\MEISetup.exe",
+          "installCmd": "\"{path}\" -s",
+          "rebootRequired": false
+        },
+        {
+          "name": "Serial IO",
+          "type": "exe",
+          "path": "drivers\\Razor\\i5\\SerialIO_30.100.2104.1_PV_TGL_PCH_20H2\\SetupSerialIO.exe",
+          "installCmd": "\"{path}\" -s",
+          "rebootRequired": false
+        },
+        {
+          "name": "HID Filter",
+          "type": "exe",
+          "path": "drivers\\Razor\\i5\\Intel HID Event Filter_V2.2.1.384_20h1\\Installer\\Setup.exe",
+          "installCmd": "\"{path}\" -s",
+          "rebootRequired": false
+        },
+        {
+          "name": "Chipset",
+          "type": "inf",
+          "path": "drivers\\Razor\\i5\\Chipset Driver_V10.1.18460.8229\\Drivers\\TigerlakePCH-LPUSBFunctionController",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        //{
+        //  "name": "Chipset",
+        //  "type": "inf",
+        //  "path": "drivers\\Razor\\i5\\Chipset Driver_V10.1.18460.8229\\Drivers\\TigerlakePCH-LPDmaSecExtension",
+        //  "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+        //  "rebootRequired": false
+        //},
+        {
+          "name": "Chipset",
+          "type": "inf",
+          "path": "drivers\\Razor\\i5\\Chipset Driver_V10.1.18460.8229\\Drivers\\TigerlakePCH-LPSystem",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "Chipset",
+          "type": "inf",
+          "path": "drivers\\Razor\\i5\\Chipset Driver_V10.1.18460.8229\\Drivers\\TigerlakePCH-LPSystemLPSS",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
+          "rebootRequired": false
+        },
+        {
+          "name": "LAN",
+          "type": "exe",
+          "path": "drivers\\Razor\\i5\\Intel LAN driver 28.2.1_x64\\Package\\APPS\\SETUP\\SETUPBD\\Winx64\\SetupBD.exe",
+          "installCmd": "\"{path}\" /s",
+          "rebootRequired": false
+        },
+        {
+          "name": "BT",
+          "type": "exe",
+          "path": "drivers\\Razor\\i5\\Intel BT\\BT-24.10.0-64UWD-Win10-Win11.exe",
+          "installCmd": "\"{path}\" /quiet",
+          "rebootRequired": false
+        }
+      ]
+    },
+    {
       "model": "Pulse Ultra WS",
       "cpu": "J6412",
       "os": "Windows 11 64-bit",
