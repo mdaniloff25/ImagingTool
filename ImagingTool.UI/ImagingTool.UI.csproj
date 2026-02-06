@@ -15,6 +15,7 @@
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>infogenesis_new.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -120,6 +121,9 @@
       <Project>{82AABF23-39CC-41B5-9E3F-D4BA275CB0F6}</Project>
       <Name>ImagingTool.Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="infogenesis_new.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

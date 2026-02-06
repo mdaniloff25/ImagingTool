@@ -18,6 +18,7 @@ namespace ImagingTool.Core
         {
             _driver = driver;
         }
+        public string DriverName => _driver.Name;
 
         public string DriverPath => _driver.Path;
 

@@ -105,7 +105,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing system driver: {Path.GetFileName(installer.DriverPath)}";
+                    _viewModel.StatusMessage = $"Installing system driver [{installer.DriverName}]: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
@@ -126,7 +126,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing common driver: {Path.GetFileName(installer.DriverPath)}";
+                    _viewModel.StatusMessage = $"Installing common driver [{installer.DriverName}]: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
@@ -147,7 +147,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing peripheral driver: {Path.GetFileName(installer.DriverPath)}";
+                    _viewModel.StatusMessage = $"Installing peripheral driver [{installer.DriverName}]: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
