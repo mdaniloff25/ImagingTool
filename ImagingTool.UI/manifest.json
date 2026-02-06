@@ -300,6 +300,28 @@
           "rebootRequired": false
         }
       ]
+    },
+    {
+      "model": "Razor",
+      "cpu": "i5",
+      "os": "Windows 11 64-bit",
+      "drivers": [
+        {
+          "name": "Display",
+          "type": "exe",
+          "path": "drivers\\Razor\\i5\\Intel Video 101.4826\\Installer.exe",
+          "installCmd": "\"{path}\" -s",
+          "rebootRequired": false
+        },
+        // !-- Using Nino III Cash Drawer driver for Razor as well JUST TESTING, might work--!
+        {
+          "name": "Cash Drawer",
+          "type": "exe",
+          "path": "Drivers\\NINO III\\J6412\\CashDrawer\\Setup.exe",
+          "installCmd": "\"{path}\" /s /f1\"{dir}\\setup.iss\"",
+          "rebootRequired": false
+        }
+      ]
     }
   ]
 }

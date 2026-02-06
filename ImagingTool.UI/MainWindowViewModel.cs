@@ -21,6 +21,7 @@ namespace ImagingTool.UI
 
         private int _maximumProgressValue = 25;
         private bool _isHardwareSupported = true;
+        private bool _isHardwareCheckComplete = false;
         
         public ICommand StartCommand { get; }
         public ICommand ExitCommand { get; }
@@ -32,7 +33,7 @@ namespace ImagingTool.UI
             StartCommand = new AsyncRelayCommand(async () =>
             {
                 await OnStartAsync();
-            }, () => !IsRunning && IsHardwareSupported);
+            }, () => !IsRunning && IsHardwareSupported && IsHardwareCheckComplete);
 
             ExitCommand = new RelayCommand(x =>
                 {
@@ -52,6 +53,7 @@ namespace ImagingTool.UI
             Application.Current.Dispatcher.Invoke(() =>
             {
                 StatusMessage = "Detecting hardware...";
+                IsHardwareCheckComplete = false; // Mark as not complete
             });
             
             InstallDrivers installer = new InstallDrivers(this);
@@ -60,6 +62,7 @@ namespace ImagingTool.UI
             Application.Current.Dispatcher.Invoke(() =>
             {
                 IsHardwareSupported = installer.IsHardwareSupported;
+                IsHardwareCheckComplete = true; // Mark as complete
 
                 if (IsHardwareSupported)
                 {
@@ -113,6 +116,19 @@ namespace ImagingTool.UI
         private void InitLogging()
         {
             log4net.Config.XmlConfigurator.Configure();
+        }
+
+        public bool IsHardwareCheckComplete
+        {
+            get { return _isHardwareCheckComplete; }
+            set
+            {
+                if (value == _isHardwareCheckComplete)
+                    return;
+                _isHardwareCheckComplete = value;
+                OnPropertyChanged();
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public bool IsHardwareSupported
