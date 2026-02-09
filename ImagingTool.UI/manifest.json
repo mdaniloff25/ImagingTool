@@ -313,6 +313,20 @@
           "installCmd": "\"{path}\" -s",
           "rebootRequired": false
         },
+        {
+          "name": "ID Tech Folder",
+          "type": "copy",
+          "path": "Drivers\\NINO III\\J6412\\ID TECH",
+          "installCmd": "C:\\Program Files (x86)",
+          "rebootRequired": false
+        },
+        {
+          "name": "MagSwipe Shortcut",
+          "type": "shortcut",
+          "path": "C:\\Program Files (x86)\\MagSwipe\\MagSwipe Configuration Utility\\MagSwipeCfgUtil.exe",
+          "installCmd": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\MagSwipe\\MagSwipe Configuration Utility.lnk",
+          "rebootRequired": false
+        },
         // !-- Using Nino III Cash Drawer driver for Razor as well JUST TESTING, might work--!
         {
           "name": "Cash Drawer",
