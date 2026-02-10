@@ -364,7 +364,8 @@ namespace ImagingTool.Core
                 case 150:
                     return 144;  // 150% = 144
                 case 175:
-                    return 140;  // User-tested: 140 works for 175% on this hardware
+                    return 134;  // User-tested: 140 works for 175% on this hardware (Windows 10)
+                                 // Note: Windows 11 seems to use 134 for 175%, so we use 134 for 175%
                 case 200:
                     return 192;  // 200% = 192
                 case 225:
