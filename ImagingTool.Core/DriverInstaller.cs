@@ -98,6 +98,11 @@ namespace ImagingTool.Core
                         await MergeRegistryFileAsync(_driver.Path);
                         return;
 
+                    case "displayscale":
+                        // Set display scale for current user and default user
+                        await SetDisplayScaleAsync(_driver.InstallCmd);
+                        return;
+
                     default:
                         throw new NotSupportedException($"Driver type '{_driver.Type}' is not supported.");
                 }
@@ -308,6 +313,224 @@ namespace ImagingTool.Core
             catch (Exception ex)
             {
                 _log.Error($"Error merging registry file {registryFilePath}: {ex.Message}");
+                throw;
+            }
+        }
+
+        private async Task SetDisplayScaleAsync(string scaleValue)
+        {
+            _log.Info($"Setting display scale to: {scaleValue}%");
+            
+            try
+            {
+                // Parse the scale value (e.g., "175" for 175%)
+                if (!int.TryParse(scaleValue, out int scale))
+                {
+                    _log.Error($"Invalid scale value: {scaleValue}. Expected a number like 100, 125, 150, 175, etc.");
+                    throw new ArgumentException($"Invalid scale value: {scaleValue}");
+                }
+
+                // Get the registry value for the scaling percentage
+                int registryValue = GetScalingRegistryValue(scale);
+                _log.Info($"Using registry value {registryValue} for {scale}% scaling");
+
+                // Step 1: Set display scale for current user
+                _log.Info("Setting display scale for current user...");
+                SetDisplayScaleForCurrentUser(registryValue);
+
+                // Step 2: Set display scale for default user
+                _log.Info("Setting display scale for default user...");
+                await SetDisplayScaleForDefaultUserAsync(registryValue);
+
+                _log.Info($"Successfully set display scale to {scale}% (registry value: {registryValue}) for current and default users");
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error setting display scale: {ex.Message}");
+                throw;
+            }
+        }
+
+        private int GetScalingRegistryValue(int scalePercent)
+        {
+            // Windows uses specific registry values for scaling percentages
+            // These are empirically determined values that Windows expects
+            switch (scalePercent)
+            {
+                case 100:
+                    return 96;   // 100% = 96 DPI (default)
+                case 125:
+                    return 120;  // 125% = 120
+                case 150:
+                    return 144;  // 150% = 144
+                case 175:
+                    return 140;  // User-tested: 140 works for 175% on this hardware
+                case 200:
+                    return 192;  // 200% = 192
+                case 225:
+                    return 216;  // 225% = 216
+                case 250:
+                    return 240;  // 250% = 240
+                case 300:
+                    return 288;  // 300% = 288
+                case 350:
+                    return 336;  // 350% = 336
+                case 400:
+                    return 384;  // 400% = 384
+                case 450:
+                    return 432;  // 450% = 432
+                case 500:
+                    return 480;  // 500% = 480
+                default:
+                    // For custom values, log a warning and return the value as-is
+                    _log.Warn($"Non-standard scaling value: {scalePercent}%. Using value directly.");
+                    return scalePercent;
+            }
+        }
+
+        private void SetDisplayScaleForCurrentUser(int dpiValue)
+        {
+            try
+            {
+                _log.Info($"Setting DPI value to {dpiValue} for current user");
+
+                // Set the LogPixels value in registry for current user
+                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+                {
+                    if (key != null)
+                    {
+                        key.SetValue("LogPixels", dpiValue, Microsoft.Win32.RegistryValueKind.DWord);
+                        key.SetValue("Win8DpiScaling", 1, Microsoft.Win32.RegistryValueKind.DWord);
+                        _log.Info("Updated HKCU\\Control Panel\\Desktop");
+                    }
+                }
+
+                // Also set in Desktop\WindowMetrics
+                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop\WindowMetrics", true))
+                {
+                    if (key != null)
+                    {
+                        key.SetValue("AppliedDPI", dpiValue, Microsoft.Win32.RegistryValueKind.DWord);
+                        _log.Info("Updated HKCU\\Control Panel\\Desktop\\WindowMetrics");
+                    }
+                }
+
+                _log.Info("Successfully set display scale for current user");
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error setting display scale for current user: {ex.Message}");
+                throw;
+            }
+        }
+
+        private async Task SetDisplayScaleForDefaultUserAsync(int dpiValue)
+        {
+            try
+            {
+                string defaultUserHive = @"C:\Users\Default\NTUSER.DAT";
+                string tempHiveKey = "TempDefaultUser";
+                
+                _log.Info($"Loading default user hive from: {defaultUserHive}");
+
+                // Step 1: Load the default user hive
+                var loadProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "reg.exe",
+                        Arguments = $"load HKLM\\{tempHiveKey} \"{defaultUserHive}\"",
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    }
+                };
+
+                loadProcess.Start();
+                string loadOutput = await loadProcess.StandardOutput.ReadToEndAsync();
+                string loadError = await loadProcess.StandardError.ReadToEndAsync();
+                await Task.Run(() => loadProcess.WaitForExit());
+
+                if (loadProcess.ExitCode != 0)
+                {
+                    _log.Error($"Failed to load default user hive. Exit code: {loadProcess.ExitCode}");
+                    _log.Error($"Error: {loadError}");
+                    throw new Exception($"Failed to load default user hive: {loadError}");
+                }
+
+                _log.Info("Default user hive loaded successfully");
+
+                try
+                {
+                    // Step 2: Modify registry values in the loaded hive
+                    using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey($@"{tempHiveKey}\Control Panel\Desktop", true))
+                    {
+                        if (key != null)
+                        {
+                            key.SetValue("LogPixels", dpiValue, Microsoft.Win32.RegistryValueKind.DWord);
+                            key.SetValue("Win8DpiScaling", 1, Microsoft.Win32.RegistryValueKind.DWord);
+                            _log.Info($"Set LogPixels to {dpiValue} in default user hive");
+                        }
+                        else
+                        {
+                            _log.Warn("Could not open Control Panel\\Desktop key in default user hive");
+                        }
+                    }
+
+                    using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey($@"{tempHiveKey}\Control Panel\Desktop\WindowMetrics", true))
+                    {
+                        if (key != null)
+                        {
+                            key.SetValue("AppliedDPI", dpiValue, Microsoft.Win32.RegistryValueKind.DWord);
+                            _log.Info($"Set AppliedDPI to {dpiValue} in default user hive");
+                        }
+                    }
+
+                    _log.Info("Successfully modified default user registry");
+                }
+                finally
+                {
+                    // Step 3: Unload the hive (always do this, even if modification failed)
+                    _log.Info("Unloading default user hive...");
+                    
+                    // Small delay to ensure all handles are released
+                    await Task.Delay(100);
+                    
+                    var unloadProcess = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "reg.exe",
+                            Arguments = $"unload HKLM\\{tempHiveKey}",
+                            CreateNoWindow = true,
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true
+                        }
+                    };
+
+                    unloadProcess.Start();
+                    string unloadOutput = await unloadProcess.StandardOutput.ReadToEndAsync();
+                    string unloadError = await unloadProcess.StandardError.ReadToEndAsync();
+                    await Task.Run(() => unloadProcess.WaitForExit());
+
+                    if (unloadProcess.ExitCode != 0)
+                    {
+                        _log.Error($"Failed to unload default user hive. Exit code: {unloadProcess.ExitCode}");
+                        _log.Error($"Error: {unloadError}");
+                    }
+                    else
+                    {
+                        _log.Info("Default user hive unloaded successfully");
+                    }
+                }
+
+                _log.Info("Successfully set display scale for default user");
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error setting display scale for default user: {ex.Message}");
                 throw;
             }
         }
