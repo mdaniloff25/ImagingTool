@@ -326,6 +326,13 @@
           "path": "",
           "installCmd": "175",
           "rebootRequired": false
+        },
+        {
+          "name": "Power Settings Configuration",
+          "type": "powershell",
+          "path": "Drivers\\Common\\PowerShell\\Set-PowerOptions.ps1",
+          "installCmd": "",
+          "rebootRequired": false
         }
       ]
     }

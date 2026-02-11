@@ -103,6 +103,11 @@ namespace ImagingTool.Core
                         await SetDisplayScaleAsync(_driver.InstallCmd);
                         return;
 
+                    case "powershell":
+                        // Run PowerShell script
+                        await RunPowerShellScriptAsync(_driver.Path);
+                        return;
+
                     default:
                         throw new NotSupportedException($"Driver type '{_driver.Type}' is not supported.");
                 }
@@ -532,6 +537,72 @@ namespace ImagingTool.Core
             catch (Exception ex)
             {
                 _log.Error($"Error setting display scale for default user: {ex.Message}");
+                throw;
+            }
+        }
+
+        private async Task RunPowerShellScriptAsync(string scriptPath)
+        {
+            _log.Info($"Running PowerShell script: {scriptPath}");
+
+            try
+            {
+                // Check if the script file exists
+                if (!File.Exists(scriptPath))
+                {
+                    _log.Error($"PowerShell script does not exist: {scriptPath}");
+                    throw new FileNotFoundException($"PowerShell script not found: {scriptPath}");
+                }
+
+                _log.Info($"PowerShell script found. Size: {new FileInfo(scriptPath).Length} bytes");
+
+                // Use PowerShell to execute the script
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = $"-ExecutionPolicy Bypass -NoProfile -File \"{scriptPath}\"",
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        WorkingDirectory = Path.GetDirectoryName(scriptPath)
+                    }
+                };
+
+                _log.Info($"Executing: powershell.exe -ExecutionPolicy Bypass -NoProfile -File \"{scriptPath}\"");
+
+                process.Start();
+                string output = await process.StandardOutput.ReadToEndAsync();
+                string error = await process.StandardError.ReadToEndAsync();
+                await Task.Run(() => process.WaitForExit());
+
+                _log.Info($"PowerShell script exited with code: {process.ExitCode}");
+
+                if (!string.IsNullOrWhiteSpace(output))
+                    _log.Info($"Output: {output}");
+                if (!string.IsNullOrWhiteSpace(error))
+                    _log.Error($"Error Output: {error}");
+
+                if (process.ExitCode != 0)
+                {
+                    _log.Error($"PowerShell script failed with exit code {process.ExitCode}");
+                    throw new Exception($"PowerShell script failed with exit code {process.ExitCode}");
+                }
+                else
+                {
+                    _log.Info($"Successfully executed PowerShell script: {scriptPath}");
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                _log.Error($"PowerShell script not found: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error running PowerShell script {scriptPath}: {ex.Message}");
                 throw;
             }
         }
