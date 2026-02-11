@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImagingTool", "ImagingTool\ImagingTool.csproj", "{894FA452-977D-4CDE-BD79-A9341F1E8759}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImagingTool.Models", "ImagingTool.Models\ImagingTool.Models.csproj", "{82AABF23-39CC-41B5-9E3F-D4BA275CB0F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImagingTool.Core", "ImagingTool.Core\ImagingTool.Core.csproj", "{B53E6210-89BE-4BD1-B4C5-92EDE17F726C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioHelper", "SoundHelper\AudioHelper.csproj", "{14B02C48-1EFF-4FDC-9EB9-C9312872A9B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B53E6210-89BE-4BD1-B4C5-92EDE17F726C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B53E6210-89BE-4BD1-B4C5-92EDE17F726C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B53E6210-89BE-4BD1-B4C5-92EDE17F726C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14B02C48-1EFF-4FDC-9EB9-C9312872A9B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14B02C48-1EFF-4FDC-9EB9-C9312872A9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14B02C48-1EFF-4FDC-9EB9-C9312872A9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14B02C48-1EFF-4FDC-9EB9-C9312872A9B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
