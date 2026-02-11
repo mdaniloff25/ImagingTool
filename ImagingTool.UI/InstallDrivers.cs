@@ -105,7 +105,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing system driver [{installer.DriverName}]: {Path.GetFileName(installer.DriverPath)}";
+                    _viewModel.StatusMessage = $"Installing system driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
@@ -126,7 +126,7 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing common driver [{installer.DriverName}]: {Path.GetFileName(installer.DriverPath)}";
+                    _viewModel.StatusMessage = $"Installing common driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
@@ -147,11 +147,16 @@ namespace ImagingTool.UI
 
                 foreach (var installer in installers)
                 {
-                    _viewModel.StatusMessage = $"Installing peripheral driver [{installer.DriverName}]: {Path.GetFileName(installer.DriverPath)}";
+                    _viewModel.StatusMessage = $"Installing peripheral driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
                     _viewModel.CurrentProgressValue += 2;
                 }
             }
+
+            // Step 4: Update ImageVersion.txt file
+            _log.Info("=== Updating ImageVersion.txt ===");
+            _viewModel.StatusMessage = "Updating image version information...";
+            await UpdateImageVersionFileAsync();
         }
 
         private void GetHardwareInfo()
@@ -160,6 +165,46 @@ namespace ImagingTool.UI
             _cpu = HardwareInfo.GetCpu();
             _log.Info($"Model: {_model}");
             _log.Info($"CPU: {_cpu}");
+        }
+
+        private async Task UpdateImageVersionFileAsync()
+        {
+            try
+            {
+                string imageVersionPath = @"C:\Image\ImageVersion.txt";
+                string imageDirectory = Path.GetDirectoryName(imageVersionPath);
+
+                // Ensure the directory exists
+                if (!Directory.Exists(imageDirectory))
+                {
+                    _log.Info($"Creating directory: {imageDirectory}");
+                    Directory.CreateDirectory(imageDirectory);
+                }
+
+                // Get current date in MM/DD/YYYY format
+                string currentDate = DateTime.Now.ToString("MM/dd/yyyy");
+                
+                // Prepare the lines to append
+                string modelLine = _model;
+                string dateLine = $"Image applied on {currentDate}";
+
+                _log.Info($"Updating ImageVersion.txt with model: {modelLine}, date: {dateLine}");
+
+                // Append to the file (create if it doesn't exist)
+                using (StreamWriter writer = new StreamWriter(imageVersionPath, append: true))
+                {
+                    await writer.WriteLineAsync(modelLine);
+                    await writer.WriteLineAsync(dateLine);
+                    await writer.WriteLineAsync(""); // Add blank line for readability
+                }
+
+                _log.Info($"Successfully updated {imageVersionPath}");
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error updating ImageVersion.txt: {ex.Message}");
+                // Don't throw - this is a non-critical operation
+            }
         }
     }
 }
