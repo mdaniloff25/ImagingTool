@@ -308,9 +308,9 @@
       "drivers": [
         {
           "name": "Display",
-          "type": "exe",
-          "path": "drivers\\Razor\\i5\\Intel Video 101.4826\\Installer.exe",
-          "installCmd": "\"{path}\" -s",
+          "type": "inf",
+          "path": "drivers\\Razor\\i5\\Intel Video 101.4826\\Graphics",
+          "installCmd": "pnputil /add-driver \"{path}\\*.inf\" /install",
           "rebootRequired": false
         },
         {

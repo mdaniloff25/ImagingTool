@@ -144,7 +144,11 @@ namespace ImagingTool.Core
                 {
                     _log.Warn($"Reboot required for {_driver.Name}. Exit code 3010");
                 }
-                if (process.ExitCode != 0)
+                else if (process.ExitCode == 259)
+                {
+                    _log.Info($"Enumeration finished (benign) for {_driver.Name} with exit code {process.ExitCode}");
+                }
+                else if (process.ExitCode != 0)
                 {
                     _log.Error($"Installation failed for {_driver.Name} with exit code {process.ExitCode}");
                 }
