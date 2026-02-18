@@ -107,7 +107,7 @@ namespace ImagingTool.UI
                 {
                     _viewModel.StatusMessage = $"Installing system driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
-                    _viewModel.CurrentProgressValue += 2;
+                    _viewModel.CurrentProgressValue += 1;
                 }
 
                 installers.Clear();
@@ -128,7 +128,7 @@ namespace ImagingTool.UI
                 {
                     _viewModel.StatusMessage = $"Installing common driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
-                    _viewModel.CurrentProgressValue += 2;
+                    _viewModel.CurrentProgressValue += 1;
                 }
 
                 installers.Clear();
@@ -149,7 +149,7 @@ namespace ImagingTool.UI
                 {
                     _viewModel.StatusMessage = $"Installing peripheral driver: {Path.GetFileName(installer.DriverPath)}";
                     await installer.InstallDriverAsync();
-                    _viewModel.CurrentProgressValue += 2;
+                    _viewModel.CurrentProgressValue += 1;
                 }
             }
 
@@ -184,11 +184,14 @@ namespace ImagingTool.UI
                 // Get current date in MM/DD/YYYY format
                 string currentDate = DateTime.Now.ToString("MM/dd/yyyy");
                 
-                // Prepare the lines to append
-                string modelLine = _model;
+                // Get the display name from the terminal configuration
+                string displayName = _systemDriversTerminal?.DisplayName ?? _model;
+                
+                // Format: "Machine Type\t\t\t{DisplayName}"
+                string modelLine = $"Machine Type\t\t\t{displayName}";
                 string dateLine = $"Image applied on {currentDate}";
 
-                _log.Info($"Updating ImageVersion.txt with model: {modelLine}, date: {dateLine}");
+                _log.Info($"Updating ImageVersion.txt with display name: {displayName}, date: {dateLine}");
 
                 // Append to the file (create if it doesn't exist)
                 using (StreamWriter writer = new StreamWriter(imageVersionPath, append: true))

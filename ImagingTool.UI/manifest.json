@@ -49,6 +49,7 @@
       "model": "NINO III",
       "cpu": "J6412",
       "os": "Windows 11 64-bit",
+      "displayName": "NINO III",
       "drivers": [
         {
           "name": "Chipset",
@@ -93,6 +94,7 @@
       "model": "PAR Wave i5",
       "cpu": "i5",
       "os": "Windows 11 64-bit",
+      "displayName": "Par Wave i5",
       "drivers": [
         {
           "name": "Chipset",
@@ -128,6 +130,7 @@
       "model": "Razor",
       "cpu": "i5",
       "os": "Windows 11 64-bit",
+      "displayName": "Touch Dynamic Razor i5",
       "drivers": [
         {
           "name": "MEI",
@@ -198,6 +201,7 @@
       "model": "Pulse Ultra WS",
       "cpu": "J6412",
       "os": "Windows 11 64-bit",
+      "displayName": "Pulse Ultra WS",
       "drivers": [
         {
           "name": "Chipset",
