@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
@@ -13,19 +14,28 @@ class Program
     private static readonly Guid IID_IAudioEndpointVolume =
         new Guid("5CDF2C82-841E-4546-9722-0CF74078229A");
 
+    private const string EVENT_SOURCE = "POSVolumeInit";
+    private const string EVENT_LOG = "Application";
+
     static int Main(string[] args)
     {
         try
         {
             EnsureAudioServiceRunning();
-            SetVolumeWithRetry();
+            if (!SetVolumeWithRetry())
+            {
+                LogFailure("Failed to set volume to zero after multiple attempts.");
+            }
+            else
+            {
+                LogSuccess("Audio volume set to zero successfully on login.");
+            }
         }
         catch
         {
             // Never fail login because of audio
         }
-        Console.WriteLine("Audio volume set to zero successfully or may have failed.");
-        Console.ReadLine(); // Keep console open for debugging
+       
         return 0; // Always exit cleanly
     }
 
@@ -45,12 +55,11 @@ class Program
         }
         catch
         {
-            // Service not present or cannot start — ignore
-            Console.WriteLine("Warning: Unable to ensure audio service is running.");
+            LogFailure("Failed to ensure audio service is running. Audio may not be initialized properly.");
         }
     }
 
-    private static void SetVolumeWithRetry()
+    private static bool SetVolumeWithRetry()
     {
         const int maxAttempts = 30;
         const int delayMs = 1000;
@@ -58,10 +67,12 @@ class Program
         for (int i = 0; i < maxAttempts; i++)
         {
             if (TrySetVolumeZero())
-                return;
+                return true;
 
             Thread.Sleep(delayMs);
         }
+
+        return false;
     }
 
     private static bool TrySetVolumeZero()
@@ -81,11 +92,8 @@ class Program
                 return true;
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Attempt to set volume to zero failed: {ex.Message}");
-            Console.WriteLine(ex.ToString());
-            Console.WriteLine("Warning: Unable to set volume to zero.");
+        catch
+        { 
             return false; // Retry
         }
     }
@@ -107,6 +115,54 @@ class Program
         }
 
         return null;
+    }
+
+    private static void LogSuccess(string message)
+    {
+        try
+        {
+            if (!EventLog.SourceExists(EVENT_SOURCE))
+            {
+                Console.WriteLine($"Event Source '{EVENT_SOURCE}' does not exist!");
+                return;
+            }
+
+            EventLog.WriteEntry(EVENT_SOURCE,
+                message,
+                EventLogEntryType.Information,
+                1001);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error writing to Event Log: {ex.Message}");
+        }
+    }
+
+    private static void LogFailure(string message, Exception ex = null)
+    {
+        try
+        {
+            if (!EventLog.SourceExists(EVENT_SOURCE))
+            {
+                Console.WriteLine($"Event Source '{EVENT_SOURCE}' does not exist!");
+                return;
+            }
+
+            string errorMessage = message;
+            if (ex != null)
+            {
+                errorMessage += $"\n\nException: {ex.Message}\nStack Trace: {ex.StackTrace}";
+            }
+
+            EventLog.WriteEntry(EVENT_SOURCE,
+                errorMessage,
+                EventLogEntryType.Error,
+                9001);
+        }
+        catch (Exception logEx)
+        {
+            Console.WriteLine($"Error writing to Event Log: {logEx.Message}");
+        }
     }
 }
 

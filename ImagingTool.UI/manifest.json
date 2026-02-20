@@ -42,6 +42,20 @@
       "path": "drivers\\Common\\EpsonADK\\EPSON_OPOS_ADK_V3.00ER13.exe",
       "installCmd": "\"{path}\" /quiet /norestart",
       "rebootRequired": false
+    },
+    {
+      "name": "Create Active Setup Registry Keys",
+      "type": "powershell",
+      "path": "Drivers\\Common\\PowerShell\\SetActiveSetup.ps1",
+      "installCmd": "",
+      "rebootRequired": false
+    },
+    {
+      "name": "Create POSVolumeInit Event Source",
+      "type": "powershell",
+      "path": "Drivers\\Common\\PowerShell\\Create-EventSource.ps1",
+      "installCmd": "",
+      "rebootRequired": false
     }
   ],
   "systemDrivers": [
